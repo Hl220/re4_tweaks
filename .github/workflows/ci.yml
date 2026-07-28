@@ -70,7 +70,7 @@ jobs:
             ${{ matrix.build-type }}/dinput8.pdb
           name: re4_tweaks_${{ steps.vars.outputs.type }}_${{ steps.vars.outputs.git_ref }}_${{ steps.vars.outputs.date }}
       
-      - name: Create Release
+      - name: Create Tag and Release
         if: matrix.build-type == 'Release' && github.event_name != 'pull_request'
         shell: bash
         env:
@@ -78,13 +78,19 @@ jobs:
         run: |
           COMMIT_ID="${GITHUB_SHA::7}"
           RELEASE_DATE="${{ steps.vars.outputs.date }}"
-          TAG_NAME="2.0-beta-${COMMIT_ID}"
+          TAG_NAME="2.0.0-beta.${{ github.run_number }}"
           ARCHIVE_NAME="re4_tweaks.2.0-beta-${COMMIT_ID}.zip"
           
           # Package required release files into zip
           cd Release
           7z a "../${ARCHIVE_NAME}" re4_tweaks dinput8.dll dinput8.ini
           cd ..
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
 
           PR_URL="${{ github.event.pull_request.html_url }}"
           COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
