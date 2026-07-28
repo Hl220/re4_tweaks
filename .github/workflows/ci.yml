@@ -76,8 +76,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG_NAME="beta-${{ steps.vars.outputs.date }}"
+          BETA_NUM="${{ github.run_number }}"
+          TAG_NAME="2.0-beta-${BETA_NUM}"
+          ARCHIVE_NAME="re4_tweaks 2.0 beta ${BETA_NUM}.zip"
           
+          # Package required release files into zip
+          cd Release
+          7z a "../${ARCHIVE_NAME}" re4_tweaks dinput8.dll dinput8.ini
+          cd ..
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
@@ -88,7 +95,7 @@ jobs:
           COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
           LINK="${PR_URL:-$COMMIT_URL}"
 
-          gh release create "$TAG_NAME" \
-            --title "$TAG_NAME" \
+          gh release create "$TAG_NAME" "$ARCHIVE_NAME" \
+            --title "re4_tweaks 2.0 beta" \
             --notes "Latest changes: $LINK" \
             --prerelease
