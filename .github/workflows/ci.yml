@@ -70,7 +70,7 @@ jobs:
             ${{ matrix.build-type }}/dinput8.pdb
           name: re4_tweaks_${{ steps.vars.outputs.type }}_${{ steps.vars.outputs.git_ref }}_${{ steps.vars.outputs.date }}
       
-      - name: Create Tag and Release
+      - name: Create Release
         if: matrix.build-type == 'Release' && github.event_name != 'pull_request'
         shell: bash
         env:
@@ -85,12 +85,6 @@ jobs:
           cd Release
           7z a "../${ARCHIVE_NAME}" re4_tweaks dinput8.dll dinput8.ini
           cd ..
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          git tag "$TAG_NAME"
-          git push origin "$TAG_NAME"
 
           PR_URL="${{ github.event.pull_request.html_url }}"
           COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
