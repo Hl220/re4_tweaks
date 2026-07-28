@@ -76,9 +76,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BETA_NUM="${{ github.run_number }}"
-          TAG_NAME="2.0-beta-${BETA_NUM}"
-          ARCHIVE_NAME="re4_tweaks 2.0 beta ${BETA_NUM}.zip"
+          COMMIT_ID="${GITHUB_SHA::7}"
+          RELEASE_DATE="${{ steps.vars.outputs.date }}"
+          TAG_NAME="2.0-beta-${COMMIT_ID}"
+          ARCHIVE_NAME="re4_tweaks.2.0-beta-${COMMIT_ID}.zip"
           
           # Package required release files into zip
           cd Release
@@ -96,6 +97,6 @@ jobs:
           LINK="${PR_URL:-$COMMIT_URL}"
 
           gh release create "$TAG_NAME" "$ARCHIVE_NAME" \
-            --title "re4_tweaks 2.0 beta" \
+            --title "re4_tweaks 2.0 beta ${RELEASE_DATE}" \
             --notes "Latest changes: $LINK" \
             --prerelease
