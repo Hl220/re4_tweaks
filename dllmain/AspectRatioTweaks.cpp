@@ -25,7 +25,8 @@ void __cdecl C_MTXOrtho_messageTrans_hook(Mtx44 mtx, float PosY, float NegY, flo
 	if (bIsUltrawide || bIs16by10)
 	{
 		// I think this should be 1.777777791f, but 1.666667f looks better for some reason?
-		float fNewAspectRatio = (fGameDisplayAspectRatio / 1.666667f);
+		// changed from 1.666667f to 1.777778f to fit custom widescreens
+		float fNewAspectRatio = (fGameDisplayAspectRatio / 1.777778f);
 
 		float fUIPosOffset = (((480.0f * fNewAspectRatio) - 512.0f) / 2.0f);
 
@@ -57,7 +58,7 @@ void __cdecl C_MTXOrtho_DrawTexture_hook(Mtx44 mtx, float PosY, float NegY, floa
 		if (re4t::cfg->bStretchFullscreenImages)
 			return bio4::C_MTXOrtho(mtx, PosY, NegY, NegX, PosX, Near, Far);
 
-		float fNewAspectRatio = (fGameDisplayAspectRatio / 1.666667f);
+		float fNewAspectRatio = (fGameDisplayAspectRatio / 1.777778f);
 
 		float fUIPosOffset = (((480.0f * fNewAspectRatio) - 512.0f) / 2.0f);
 
@@ -76,7 +77,7 @@ void __cdecl C_MTXOrtho_cSofdec_hook(Mtx44 mtx, float PosY, float NegY, float Ne
 		if (re4t::cfg->bStretchVideos)
 			return bio4::C_MTXOrtho(mtx, PosY, NegY, NegX, PosX, Near, Far);
 
-		float fNewAspectRatio = (fGameDisplayAspectRatio / 1.666667f);
+		float fNewAspectRatio = (fGameDisplayAspectRatio / 1.777778f);
 
 		float fUIPosOffset = (((480.0f * fNewAspectRatio) - 512.0f) / 2.0f);
 
@@ -171,10 +172,11 @@ void re4t::init::AspectRatioTweaks()
 			double fNewEsp18Height = 0.50068 / fNewAspectRatio;
 
 			// if ultrawide/super ultrawide or 16:10
-			if (((fGameDisplayAspectRatio > 2.2f) && re4t::cfg->bUltraWideAspectSupport) ||
+			// 2.2f for wdiescreen (e.g. 16:9) | 2.0f for custom widescreen (e.g. 19.5:9)
+			if (((fGameDisplayAspectRatio > 2.0f) && re4t::cfg->bUltraWideAspectSupport) ||
 				((fGameDisplayAspectRatio == 1.6f) && re4t::cfg->bRemove16by10BlackBars))
 			{
-				bIsUltrawide = fGameDisplayAspectRatio > 2.2f;
+				bIsUltrawide = fGameDisplayAspectRatio > 2.0f;
 				bIs16by10 = fGameDisplayAspectRatio == 1.6f;
 
 				#ifdef VERBOSE
